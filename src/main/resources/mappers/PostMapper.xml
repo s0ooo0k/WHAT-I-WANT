@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 연결할 Mapper 인터페이스 경로 -->
+<mapper namespace="io.github.s0ooo0k.dbtest.model.mapper.PostMapper">
+    <!-- record 용 생성자 매핑 - resultMap: Post 객체 생성자와 컬럼 연결 -->
+    <resultMap id="postMap" type="io.s0ooo0k.dbtest.model.vo.Post">
+        <constructor>
+            <arg column="id" javaType="int"/>
+            <arg column="title" javaType="String"/>
+            <arg column="content" javaType="String"/>
+            <arg column="image_url" javaType="String"/>
+            <arg column="likes" javaType="int"/>
+            <arg column="created_at" javaType="java.sql.Timestamp"/>
+        </constructor>
+    </resultMap>
+
+    <!-- 게시글 목록 조회 -->
+     <select id="findAll" resultMap="postMap">
+         SELECT * FROM post ORDER BY created_at DESC
+     </select>
+
+    <!-- id로 게시글 하나 조회 -->
+    <select id="findById" resultMap="postMap" parameterType="int">
+        SELECT * FROM post WHERE id = #{id}
+    </select>
+
+    <!-- 게시글 등록 (PostRequestDTO의 필드 값으로 쿼리 수행) -->
+    <insert id="insert" parameterType="io.github.s0ooo0k.dbtest.model.vo.PostRequestDTO">
+        INSERT INTO post (title, content, image_url)
+        VALUES (#{title}, #{content}, #{imgUrl})
+    </insert>
+
+    <!-- 좋아요 1 증가 -->
+    <update id="like" parameterType="int">
+        UPDATE post SET likes = likes + 1 WHERE id = #{id}
+    </update>
+</mapper>
